@@ -2,6 +2,7 @@ import React from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { useState } from "react";
 
 import ImageViewer from "@/components/ImageViewer";
 import Button from '@/components/Button';
@@ -11,6 +12,9 @@ const PlaceholderImage = require("@/assets/images/background-image.png");
 
 
 export default function StickerAppScreen() {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [showAppOptions, setShowAppOptions] = useState(false);
+
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
@@ -18,7 +22,8 @@ export default function StickerAppScreen() {
     })
 
     if (!result.canceled) {
-      console.log(result);
+      setSelectedImage(result.assets[0].uri);
+      setShowAppOptions(true);
     } else {
       alert('You did not pick an image.');
     }
@@ -28,12 +33,19 @@ export default function StickerAppScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
-        <ImageViewer placeholderImageSource={PlaceholderImage} />
+        <ImageViewer 
+          placeholderImageSource={PlaceholderImage}
+          selectedImage={selectedImage}
+        />
       </View>
-      <View style={styles.footerContainer}>
+      { showAppOptions ? (
+        <View/>
+      ) : (
+        <View style={styles.footerContainer}>
         <Button label="Choose a photo " theme="primary" onPress={pickImageAsync} />
-        <Button label="Use this photo " theme="" onPress/>
+        <Button label="Use this photo " theme="" onPress={() => setShowAppOptions(true)}/>
       </View>
+      )}
       <StatusBar style="auto" />
     </View>
   );
