@@ -3,11 +3,14 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, View } from "react-native";
 import { useColorScheme } from "@/hooks/useColorScheme";
 import { useState } from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import ImageViewer from "@/components/ImageViewer";
 import CircleButton from "@/components/CircleButton";
 import IconButton from "@/components/IconButton";
-
+import EmojiPicker from "@/components/EmojiPicker";
+import EmojiList from "@/components/EmojiList";
+import EmojiSticker from "@/components/EmojiSticker";
 import Button from '@/components/Button';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -17,15 +20,20 @@ const PlaceholderImage = require("@/assets/images/background-image.png");
 export default function StickerAppScreen() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showAppOptions, setShowAppOptions] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [pickedEmoji, setPickedEmoji] = useState(null);
 
   const onReset = () => {
     setShowAppOptions(false);
   }
 
   const onAddSticker = () => {
-    console.log('Adding sticker');
-    alert('Adding sticker');
-  }
+    setIsModalVisible(true);
+  };
+
+  const onModalClose = () => {
+    setIsModalVisible(false);
+  };
 
   const onSaveImageAsync = () => {
     console.log('Saving image');
@@ -48,12 +56,13 @@ export default function StickerAppScreen() {
 
   const colorScheme = useColorScheme();
   return (
-    <View style={styles.container}>
+    <GestureHandlerRootView style={styles.container}>
       <View style={styles.imageContainer}>
         <ImageViewer 
           placeholderImageSource={PlaceholderImage}
           selectedImage={selectedImage}
         />
+        { pickedEmoji && <EmojiSticker imageSize={40} stickerSource={pickedEmoji}  /> }
       </View>
       { showAppOptions ? (
         <View style={styles.optionsContainer}>
@@ -69,8 +78,11 @@ export default function StickerAppScreen() {
         <Button label="Use this photo " theme="" onPress={() => setShowAppOptions(true)}/>
       </View>
       )}
+      <EmojiPicker isVisible={isModalVisible} onClose={onModalClose}>
+        <EmojiList onSelect={setPickedEmoji} onCloseModal={onModalClose} />
+      </EmojiPicker>
       <StatusBar style="auto" />
-    </View>
+    </GestureHandlerRootView>
   );
 
 }
