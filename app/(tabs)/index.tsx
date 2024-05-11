@@ -5,6 +5,9 @@ import { useColorScheme } from "@/hooks/useColorScheme";
 import { useState } from "react";
 
 import ImageViewer from "@/components/ImageViewer";
+import CircleButton from "@/components/CircleButton";
+import IconButton from "@/components/IconButton";
+
 import Button from '@/components/Button';
 import * as ImagePicker from 'expo-image-picker';
 
@@ -14,6 +17,20 @@ const PlaceholderImage = require("@/assets/images/background-image.png");
 export default function StickerAppScreen() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showAppOptions, setShowAppOptions] = useState(false);
+
+  const onReset = () => {
+    setShowAppOptions(false);
+  }
+
+  const onAddSticker = () => {
+    console.log('Adding sticker');
+    alert('Adding sticker');
+  }
+
+  const onSaveImageAsync = () => {
+    console.log('Saving image');
+    alert('Saving image');
+  }
 
   const pickImageAsync = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -39,7 +56,13 @@ export default function StickerAppScreen() {
         />
       </View>
       { showAppOptions ? (
-        <View/>
+        <View style={styles.optionsContainer}>
+          <View style={styles.optionsRow}>
+            <IconButton icon="refresh" label="Reset" onPress={onReset} />
+            <CircleButton onPress={onAddSticker} />
+            <IconButton icon="save-alt" label="Save" onPress={onSaveImageAsync} />
+          </View>
+        </View>
       ) : (
         <View style={styles.footerContainer}>
         <Button label="Choose a photo " theme="primary" onPress={pickImageAsync} />
@@ -71,5 +94,13 @@ const styles = StyleSheet.create({
     height: 440,
     borderRadius: 18,
   },
+  optionsContainer: {
+    position: 'absolute',
+    bottom: 80,
+  },
+  optionsRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+  }
 
 });
